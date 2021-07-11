@@ -4,13 +4,16 @@
   "description": "",
   "main": "index.js",
   "keywords": [],
-  "author": "",
+  "author": "Moises Reyes",
   "license": "ISC",
   "scripts": {
     "dev": "nodemon src/index.ts --exec ts-node",
     "typeorm": "ts-node ./node_modules/typeorm/cli.js --config ./src/config/ormconfig.ts",
     "typeorm:migration": "ts-node ./node_modules/typeorm/cli.js --config ./src/config/ormconfig.ts migration:generate -n ",
-    "typeorm:run": "npm run typeorm migration:run"
+    "typeorm:run": "npm run typeorm migration:run",
+    "fast-dev": "nodemon --exec ts-node --files --transpile-only src/server.ts",
+    "build": "webpack --mode production",
+    "start": "node --trace-warnings dist/server.bundle.js "
   },
   "dependencies": {
     "@types/bcryptjs": "^2.4.2",
