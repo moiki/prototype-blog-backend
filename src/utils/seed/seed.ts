@@ -9,7 +9,7 @@ export interface IRoles {
 export const seed_roles = [
   {
     is_active: true,
-    role_name: "Root",
+    role_name: "Master",
     description:
       "This role represents a Master User which has access to all functions and modules of the system.",
   },
@@ -19,33 +19,16 @@ export const seed_roles = [
     description:
       "Administrator can manage Clinics, Employees and Routes modules.",
   },
-  {
-    is_active: true,
-    role_name: "Local Member",
-    description: "This role can manage Pacients module.",
-  },
-  {
-    is_active: true,
-    role_name: "Support Doctor",
-    description:
-      "This role has access to the pacients informations in order to track every case.",
-  },
-  {
-    is_active: true,
-    role_name: "Sponsor",
-    description:
-      "This role has access to pacient, clinics and routes information.",
-  },
 ];
 
 export const seed_user = {
-  first_name: "Master",
-  last_name: "Root",
+  first_name: String(process.env.MASTER_ROOT_NAME).split(" ")[0] || "Manfred",
+  last_name: String(process.env.MASTER_ROOT_NAME).split(" ")[1] || "Tijerino",
   email: process.env.MASTER_ROOT_EMAIL,
   phone_number: "+111111111111",
-  profession: "System Administrator",
+  profession: "Administrator",
   email_confirmed: true,
-  address: "None Address yet",
+  address: "None Address Set",
 };
 
 export const setup = async () => {

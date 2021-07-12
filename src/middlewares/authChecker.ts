@@ -3,6 +3,7 @@ import { AuthChecker } from "type-graphql";
 import "dotenv/config";
 import Error from "./errorHandler";
 // import { Roles } from "../models/roles.entity";
+import { User } from "../model/user.entity";
 import * as _ from "lodash";
 // import crypto from "../utils/crypto/index";
 // const contextService = require("request-context");
@@ -35,26 +36,26 @@ const authChecker: AuthChecker<any, AuthParams> = async (
     // const value: string = crypto.decrypt(payload.info);
     // contextService.set("req:user", payload);
     // user permissions
-    // let currentUser = await User.findOne({
-    //   where: { id: payload!.user },
-    //   relations: ["roles"],
-    // });
-    // if (roles!.length) {
-    //   const u_roles = currentUser?.roles.map((role) => role.role_name);
+    let currentUser = await User.findOne({
+      where: { id: payload!.user },
+      relations: ["roles"],
+    });
+    if (roles!.length) {
+      const u_roles = currentUser?.roles.map((role) => role.role_name);
 
-    //   if (strict) {
-    //     // Check if the required permission exits in the user permissions
-    //     if (!roles!.every((u: string) => u_roles!.includes(u))) {
-    //       throw new Error("Insufficient permissions for this request", 403);
-    //     }
-    //   } else {
-    //     // Check if the required permission exits in the user permissions
-    //     if (!roles!.some((u: string) => u_roles!.includes(u))) {
-    //       throw new Error("Insufficient permissions for this request", 403);
-    //     }
-    //   }
-    // }
-    // context.payload = { id: payload.user };
+      if (strict) {
+        // Check if the required permission exits in the user permissions
+        if (!roles!.every((u: string) => u_roles!.includes(u))) {
+          throw new Error("Insufficient permissions for this request", 403);
+        }
+      } else {
+        // Check if the required permission exits in the user permissions
+        if (!roles!.some((u: string) => u_roles!.includes(u))) {
+          throw new Error("Insufficient permissions for this request", 403);
+        }
+      }
+    }
+    context.payload = { id: payload.user };
 
     return true;
   } catch ({ message, code }) {

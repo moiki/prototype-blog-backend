@@ -7,13 +7,12 @@ import {
   UpdateDateColumn,
   VersionColumn,
 } from "typeorm";
-import { v4 as uuidv4 } from "uuid";
 
 export abstract class MyEntity extends BaseEntity {
   @ObjectIdColumn()
-  _id: ObjectID;
-  @Column({ unique: true, type: "uuid", default: uuidv4(), generated: "uuid" })
-  id: string;
+  id: ObjectID;
+  @Column({ unique: true, nullable: false })
+  reference_id: string;
   @Column({ type: "boolean", default: true })
   is_active: boolean;
   @CreateDateColumn()

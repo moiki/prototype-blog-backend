@@ -1,6 +1,7 @@
-import { Column, Entity, JoinTable, ManyToMany } from "typeorm";
+import { BeforeInsert, Column, Entity, JoinTable, ManyToMany } from "typeorm";
 import { MyEntity } from "./abstract/MyEntity";
 import { Roles } from "./roles.entity";
+import { v4 as uuidv4 } from "uuid";
 
 @Entity()
 export class User extends MyEntity {
@@ -46,4 +47,9 @@ export class User extends MyEntity {
     },
   })
   roles: Roles[];
+  @BeforeInsert()
+  updateDates() {
+    console.log("Im running");
+    this.reference_id = uuidv4();
+  }
 }
