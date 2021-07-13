@@ -1,12 +1,12 @@
 import { getMongoRepository } from "typeorm";
 import { Roles } from "./model/roles.entity";
-import * as dotenv from "dotenv";
 import { seed_roles, seed_user } from "./utils/seed/seed";
 import crypt from "./utils/crypto/index";
 import { User } from "./model/user.entity";
 import { cyan, red } from "chalk";
 import ErrorHandler from "./middlewares/errorHandler";
 
+import * as dotenv from "dotenv";
 dotenv.config();
 
 const { MASTER_ROOT_PASSWORD = "demo@1234", MASTER_ROOT_EMAIL } = process.env;

@@ -1,4 +1,4 @@
-import { ObjectType } from 'type-graphql';
+import { ObjectType } from "type-graphql";
 import {
   prop,
   Ref,
@@ -8,34 +8,34 @@ import {
   plugin,
   modelOptions,
   getModelForClass,
-} from '@typegoose/typegoose';
-import { Field, ID } from 'type-graphql';
-import { Role, roleModel } from './role.mongo';
-import bcrypt from 'bcryptjs';
-import mongoose from 'mongoose';
+} from "@typegoose/typegoose";
+import { Field, ID } from "type-graphql";
+import { Role, roleModel } from "./role.mongo";
+import mongoose from "mongoose";
 // import jwt from 'jsonwebtoken';
 // import paginate from '../utils/reusableSnippets/pagination';
-import { Base } from './abstract/base.mongo';
-import mongoPaginate from 'src/utils/mongoPaginate';
-import Error from '../middlewares/errorHandler';
+import { Base } from "./abstract/base.mongo";
+import mongoPaginate from "src/utils/mongoPaginate";
+import Error from "../middlewares/errorHandler";
+import crypto from "../utils/crypto";
 
 // const { GLOBAL_SECRET, EMAIL_VERIFICATION_EXPIRY } = process.env;
 
-@pre<User>('save', async function (next): Promise<void> {
+@pre<User>("save", async function (next): Promise<void> {
   if (this.isNew) {
     // Keep the is new data for post hook
     this.wasNew = this.isNew;
 
     // Hash the password before saving
-    this.password = await bcrypt.hash(this.password, 12);
+    this.hashed_password = await crypto.hashPassword(this.hashed_password);
 
     // Get the admin and base role
     const adminRole = await roleModel.findOne(
-      { usedFor: 'adminRole' },
+      { usedFor: "adminRole" },
       { id: 1 }
     );
     const baseRole = await roleModel.findOne(
-      { usedFor: 'baseRole' },
+      { usedFor: "baseRole" },
       { id: 1 }
     );
 
@@ -49,7 +49,6 @@ import Error from '../middlewares/errorHandler';
 
   next();
 })
-
 @ObjectType()
 @modelOptions({ schemaOptions: { timestamps: true } })
 @plugin(mongoPaginate)
@@ -73,12 +72,11 @@ export class User extends Base {
   email: string;
 
   @prop({ required: true })
-  password: string;
+  hashed_password: string;
 
   @prop({ ref: Role, text: true })
   @Field(() => Role, { nullable: false })
   role: Ref<Role>;
-
 
   @prop({ default: 1 })
   tokenVersion: number;
@@ -92,27 +90,36 @@ export class User extends Base {
 }
 
 interface createUser {
-  email: string,
-  password: string,
-  firstName: string,
-  lastName: string,
-  confirmPassword: string
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  confirmPassword: string;
 }
 
-export const createUser = (
-  { email, password, firstName, lastName, confirmPassword }: createUser
-): Promise<User> => {
+export const createUser = ({
+  email,
+  password,
+  firstName,
+  lastName,
+  confirmPassword,
+}: createUser): Promise<User> => {
   return new Promise(async (resolve, reject) => {
     try {
       // Check if the user exists in the DB
-      const user = await userModel.findOne({ email })
+      const user = await userModel.findOne({ email });
 
       // Throw error if user already exists
-      if (user) { throw new Error('Unable to process your request with the provided email', 400) }
+      if (user) {
+        throw new Error(
+          "Unable to process your request with the provided email",
+          400
+        );
+      }
 
       // if user does not exist proceed to chech that the passwords match
       if (password !== confirmPassword) {
-        throw new Error('The passwords do not match', 400)
+        throw new Error("The passwords do not match", 400);
       }
 
       // If the passwords match proceed to create the user
@@ -120,14 +127,14 @@ export const createUser = (
         firstName,
         lastName,
         password,
-        email
-      })
+        email,
+      });
 
-      resolve(newUser)
+      resolve(newUser);
     } catch (e) {
-      reject(e)
+      reject(e);
     }
-  })
-}
+  });
+};
 
 export const userModel = getModelForClass(User);
