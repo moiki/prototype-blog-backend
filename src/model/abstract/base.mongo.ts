@@ -1,6 +1,6 @@
-import { ObjectType, Field } from 'type-graphql';
-import { prop, pre, Ref } from '@typegoose/typegoose';
-import { User } from '../user.mongo';
+import { ObjectType, Field, ID } from 'type-graphql';
+import { prop, pre } from '@typegoose/typegoose';
+// import { User } from '../user.mongo';
 const contextService = require('request-context');
 
 @pre<Base>('validate', function (next) {
@@ -11,6 +11,7 @@ const contextService = require('request-context');
     // Set the createdby value
     this.createdBy = user ? user._id : undefined;
     this.createdByName = `${user ? user.firstName : 'System'} ${user ? user.firstName : ''
+      
       }`;
     this.lastUpdatedBy = user ? user._id : undefined;
     return next();
@@ -40,14 +41,14 @@ export class Base {
   @Field(() => Date, { nullable: false })
   updatedAt: Date;
 
-  @prop({ required: false, ref: 'User' })
-  @Field(() => User, { nullable: true })
-  createdBy: Ref<User>;
+  @prop({ required: false })
+  @Field(() => ID, { nullable: true, })
+  createdBy: string;
 
   @prop({ type: String, required: false, text: true, index: true })
   createdByName: string;
 
-  @prop({ required: false, ref: 'User', text: true })
-  @Field(() => User, { nullable: true })
-  lastUpdatedBy: Ref<User>;
+  @prop({ required: false, text: true })
+  @Field(() => ID, { nullable: true })
+  lastUpdatedBy: string;
 }

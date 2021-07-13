@@ -12,9 +12,6 @@ import {
 } from "@typegoose/typegoose";
 import { Field, ID } from "type-graphql";
 import { Role, roleModel } from "./role.mongo";
-// import mongoose from "mongoose";
-// import jwt from 'jsonwebtoken';
-// import paginate from '../utils/reusableSnippets/pagination';
 import { Base } from "./abstract/base.mongo";
 import mongoPaginate from "../utils/mongoPaginate";
 import Error from "../middlewares/errorHandler";
@@ -32,11 +29,11 @@ import crypto from "../utils/crypto";
 
     // Get the admin and base role
     const adminRole = await roleModel.findOne(
-      { usedFor: "adminRole" },
+      { usedFor: "master" },
       { id: 1 }
     );
     const baseRole = await roleModel.findOne(
-      { usedFor: "baseRole" },
+      { usedFor: "administrator" },
       { id: 1 }
     );
 
@@ -75,8 +72,8 @@ export class User extends Base {
   @prop({ required: true })
   hashed_password: string;
 
-  @prop({ ref: Role, text: true })
-  @Field(() => Role, { nullable: false })
+  @prop({ ref: 'Role', text: true })
+  @Field(() => Role, { nullable: false, })
   role: Ref<Role>;
 
   @prop({ default: 1 })

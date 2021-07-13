@@ -8,7 +8,7 @@ export const MongooseConnection = async () => {
     `mongodb+srv://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_DATABASE_URL}/${MONGO_DATABASE}?retryWrites=true&w=majority`,
     {
       useNewUrlParser: true,
-      // dbName: DB_NAME,
+      dbName: MONGO_DATABASE,
       useUnifiedTopology: true,
       useCreateIndex: true,
       useFindAndModify: false,
