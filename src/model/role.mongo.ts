@@ -10,7 +10,7 @@ import { Base } from "./abstract/base.mongo";
 // import { Permission } from "./permission";
 import Error from ".././middlewares/errorHandler";
 import { userModel } from "./user.mongo";
-import mongoPaginate from "src/utils/mongoPaginate";
+import mongoPaginate from "../utils/mongoPaginate";
 
 // ENSURE THAT WE ARE NOT DELETEING BASE ROLES
 @pre<Role>("remove", async function (next) {

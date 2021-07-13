@@ -4,6 +4,7 @@ import {
   Ref,
   // arrayProp,
   pre,
+  mongoose,
   // post,
   plugin,
   modelOptions,
@@ -11,11 +12,11 @@ import {
 } from "@typegoose/typegoose";
 import { Field, ID } from "type-graphql";
 import { Role, roleModel } from "./role.mongo";
-import mongoose from "mongoose";
+// import mongoose from "mongoose";
 // import jwt from 'jsonwebtoken';
 // import paginate from '../utils/reusableSnippets/pagination';
 import { Base } from "./abstract/base.mongo";
-import mongoPaginate from "src/utils/mongoPaginate";
+import mongoPaginate from "../utils/mongoPaginate";
 import Error from "../middlewares/errorHandler";
 import crypto from "../utils/crypto";
 

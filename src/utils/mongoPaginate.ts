@@ -1,96 +1,97 @@
-import { isMongoId } from 'class-validator'
-import mongoose from 'mongoose'
+import { mongoose } from "@typegoose/typegoose";
+import { isMongoId } from "class-validator";
 // import { isMongoId } from '.'
-import Error from '../middlewares/errorHandler'
+import Error from "../middlewares/errorHandler";
 
 const xisMongoId = (id: string) => {
-  return isMongoId(id)
-}
+  return isMongoId(id);
+};
 
 interface paginateOutput {
-  docs: any[]
-  total: number
-  perPage: number
-  page: number
-  pages: number
+  docs: any[];
+  total: number;
+  perPage: number;
+  page: number;
+  pages: number;
 }
 interface paginationOptions {
-  select: any,
-  sort: any,
-  page: number,
-  perPage: number
+  select: any;
+  sort: any;
+  page: number;
+  perPage: number;
 }
 
-async function paginate(this: any,
+async function paginate(
+  this: any,
   query: any,
   options: paginationOptions = {
     select: {},
     sort: [],
     page: 1,
-    perPage: 10
+    perPage: 10,
   }
 ): Promise<paginateOutput> {
   // get data from options
-  let { select, sort, page, perPage } = options
+  let { select, sort, page, perPage } = options;
 
   // Parse the query coming from the query
-  const parsedQuery = JSON.parse(JSON.stringify(query))
+  const parsedQuery = JSON.parse(JSON.stringify(query));
 
   // Get the schema paths of the model
-  const paths = this.schema.paths
+  const paths = this.schema.paths;
 
   if (query.length) {
     // Construct the query
     query = parsedQuery.reduce((x: any, u: any) => {
       // If the instance is ObjectID
-      if (paths[u.field]['instance'] === 'ObjectID') {
+      if (paths[u.field]["instance"] === "ObjectID") {
         // Check if the value recived is an array
         if (Array.isArray(u.value)) {
-          x[u.field] = { $in: u.value.map((u: any) => u.value) }
+          x[u.field] = { $in: u.value.map((u: any) => u.value) };
         } else if (xisMongoId(u.value)) {
-          x[u.field] = mongoose.Types.ObjectId(u.value)
+          x[u.field] = mongoose.Types.ObjectId(u.value);
         } else {
-          throw new Error('The provided ID is invalid', 400)
+          throw new Error("The provided ID is invalid", 400);
         }
 
         // If the instance is String
-      } else if (paths[u.field]['instance'] === 'String') {
-        x[u.field] = new RegExp(`${u.value}`, 'i')
+      } else if (paths[u.field]["instance"] === "String") {
+        x[u.field] = new RegExp(`${u.value}`, "i");
 
         // Any other instance
       } else {
-        x[u.field] = u.value
+        x[u.field] = u.value;
       }
-      return x
-    }, {})
+      return x;
+    }, {});
   } else {
-    query = {}
+    query = {};
   }
 
   // Parse the sort coming from the sort param
-  const parsedSort = JSON.parse(JSON.stringify(sort))
+  const parsedSort = JSON.parse(JSON.stringify(sort));
 
   if (sort.length) {
     // Construct the sort
     sort = parsedSort.reduce((x: any, u: any) => {
-      x[u.field] = u.direction
-      return x
-    }, {})
+      x[u.field] = u.direction;
+      return x;
+    }, {});
   } else {
-    sort = {}
+    sort = {};
   }
 
   // calculate skip
-  const skip = (page - 1) * perPage
+  const skip = (page - 1) * perPage;
 
   // calculate amount of documents
-  const total = await this.countDocuments(query)
+  const total = await this.countDocuments(query);
 
   const docs = await this.find(query)
     .select(select)
     .sort(sort)
     .skip(skip)
-    .limit(perPage)
+    .limit(perPage);
 
   // return the data
   return {
@@ -98,10 +99,10 @@ async function paginate(this: any,
     total,
     pages: Math.ceil(total / perPage) || 1,
     page,
-    perPage
-  }
+    perPage,
+  };
 }
 
 export default function (schema: any) {
   schema.statics.paginate = paginate;
-};
+}

@@ -1,22 +1,25 @@
 import "reflect-metadata";
 import { magenta } from "chalk";
-import { createConnection } from "typeorm";
+// import { createConnection } from "typeorm";
 import { startServer } from "./app";
-import config from "./config/ormconfig";
+// import config from "./config/ormconfig";
 import ErrorHandler from "./middlewares/errorHandler";
-import { seedInitial } from "./seeder";
+// import { seedInitial } from "./seeder";
+import { MongooseConnection } from "./config/mongooseConfig";
+import { InitialSet } from "./utils/seed/seed";
 
-export const dbConnect = async () => {
-  await createConnection(config);
-  // await conn.runMigrations();
-  console.log(`I'm Connected to DB Server`);
-};
+// export const dbConnect = async () => {
+//   await createConnection(config);
+//   // await conn.runMigrations();
+//   console.log(`I'm Connected to DB Server`);
+// };
 
 async function main() {
   try {
-    dbConnect().then(async () => {
-      const seeded = await seedInitial();
-      if (seeded) {
+    MongooseConnection().then(async () => {
+      console.log(`I'm Connected to DB Server`);
+      const setup = await InitialSet();
+      if (setup) {
         console.log("Initial Seed executed successfully!");
       }
     });

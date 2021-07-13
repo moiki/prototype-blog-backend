@@ -1,6 +1,7 @@
+import { cyan } from "chalk";
 import * as dotenv from "dotenv";
-import { roleModel } from "src/model/role.mongo";
-import { userModel } from "src/model/user.mongo";
+import { roleModel } from "../../model/role.mongo";
+import { userModel } from "../../model/user.mongo";
 dotenv.config();
 
 const {
@@ -39,6 +40,9 @@ export const seed_user = {
 
 export const InitialSet = async () => {
   try {
+    if ((await userModel.estimatedDocumentCount()) < 1) {
+      return false;
+    }
     const user = {
       //  ...user,
       ...seed_user,
@@ -46,8 +50,7 @@ export const InitialSet = async () => {
       email: MASTER_ROOT_EMAIL!,
       hashed_password: MASTER_ROOT_PASSWORD,
     };
-    const rolesExist = await roleModel.find();
-    if (!(rolesExist.length === 0)) {
+    if ((await roleModel.estimatedDocumentCount()) > 0) {
       await userModel.create(user);
     } else {
       const new_roles = await Promise.all(
@@ -56,8 +59,15 @@ export const InitialSet = async () => {
         })
       );
       if (new_roles.length > 0) await userModel.create(user);
+      console.log(
+        cyan(
+          "***********************DEFAULT USER HAVE BEEN INSERTED*******************************"
+        )
+      );
     }
+    return true;
   } catch (error) {
     console.log(error.message);
+    return false;
   }
 };
