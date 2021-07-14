@@ -3,10 +3,10 @@ import { AuthChecker } from "type-graphql";
 import "dotenv/config";
 import Error from "./errorHandler";
 // import { Roles } from "../models/roles.entity";
-import { User } from "../model/user.entity";
-import * as _ from "lodash";
+// import * as _ from "lodash";
+import { userModel } from "../model/user.mongo";
 // import crypto from "../utils/crypto/index";
-// const contextService = require("request-context");
+const contextService = require("request-context");
 
 export type AuthParams = {
   roles?: string[];
@@ -34,23 +34,20 @@ const authChecker: AuthChecker<any, AuthParams> = async (
     // Validate the token
     const payload: any = jwt.verify(token, process.env.JWT_API_SECRET!);
     // const value: string = crypto.decrypt(payload.info);
-    // contextService.set("req:user", payload);
-    // user permissions
-    let currentUser = await User.findOne({
-      where: { id: payload!.user },
-      relations: ["roles"],
-    });
+    contextService.set("req:user", payload);
+
+    let currentUser = await userModel.findOne({ id: payload.user });
     if (roles!.length) {
-      const u_roles = currentUser?.roles.map((role) => role.role_name);
+      const u_roles = currentUser?.role;
 
       if (strict) {
         // Check if the required permission exits in the user permissions
-        if (!roles!.every((u: string) => u_roles!.includes(u))) {
+        if (!roles!.every((u: string) => u === u_roles.name)) {
           throw new Error("Insufficient permissions for this request", 403);
         }
       } else {
         // Check if the required permission exits in the user permissions
-        if (!roles!.some((u: string) => u_roles!.includes(u))) {
+        if (!roles!.some((u: string) => u === u_roles.name)) {
           throw new Error("Insufficient permissions for this request", 403);
         }
       }

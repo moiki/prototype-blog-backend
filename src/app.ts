@@ -12,12 +12,14 @@ import * as dotenv from "dotenv";
 import ErrorHandler from "./middlewares/errorHandler";
 import { PingResolver } from "./resolvers/ping";
 dotenv.config();
-
+const contextService = require("request-context");
 const { NODE_ENV, ALLOWED_ORIGINS } = process.env;
 
 export async function startServer() {
   const app = express();
   // Create production basic security
+  // Add context service middleware
+  app.use(contextService.middleware("req"));
   if (NODE_ENV === "production") {
     app.use(json({ limit: "2mb" }));
     app.use(enforce.HTTPS({ trustProtoHeader: true }));

@@ -18,12 +18,14 @@ export const seed_roles = [
   {
     is_active: true,
     name: "Master",
+    usedFor: "master",
     description:
       "This role represents a Master User which has access to all functions and modules of the system.",
   },
   {
     is_active: true,
     name: "Administrator",
+    usedFor: "administrator",
     description: "Limited Aministrator Role",
   },
 ];
@@ -38,9 +40,7 @@ export const seed_user = {
 
 export const InitialSet = async () => {
   try {
-console.log("Entrando 3")
-
-    if ((await userModel.estimatedDocumentCount()) > 1) {
+    if ((await userModel.estimatedDocumentCount()) > 0) {
       return false;
     }
     const user = {
@@ -50,17 +50,17 @@ console.log("Entrando 3")
       hashed_password: MASTER_ROOT_PASSWORD,
     };
     if ((await roleModel.estimatedDocumentCount()) > 0) {
-      console.log("Entrando Con Roles")
+      console.log("Entrando Con Roles");
 
       await userModel.create(user);
     } else {
-        console.log("Entrando sin Roles")
+      console.log("Entrando sin Roles");
       const new_roles = await Promise.all(
         seed_roles.map(async (role) => {
           return await roleModel.create(role);
         })
       );
-      console.log(new_roles)
+      console.log(new_roles);
       if (new_roles.length > 0) await userModel.create(user);
       console.log(
         cyan(
@@ -70,7 +70,7 @@ console.log("Entrando 3")
     }
     return true;
   } catch (error) {
-    console.log('mi error', error.message);
+    console.log("mi error", error.message);
     return false;
   }
 };

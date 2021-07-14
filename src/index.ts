@@ -1,18 +1,9 @@
 import "reflect-metadata";
 import { magenta } from "chalk";
-// import { createConnection } from "typeorm";
 import { startServer } from "./app";
-// import config from "./config/ormconfig";
 import ErrorHandler from "./middlewares/errorHandler";
-// import { seedInitial } from "./seeder";
 import { MongooseConnection } from "./config/mongooseConfig";
 import { InitialSet } from "./utils/seed/seed";
-
-// export const dbConnect = async () => {
-//   await createConnection(config);
-//   // await conn.runMigrations();
-//   console.log(`I'm Connected to DB Server`);
-// };
 
 async function main() {
   try {
