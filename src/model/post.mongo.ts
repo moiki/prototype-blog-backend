@@ -12,7 +12,7 @@ export enum POST_STATUS {
 }
 
 @ObjectType()
-@ModelOptions({ schemaOptions: { timestamp: true } })
+@ModelOptions({ schemaOptions: { timestamps: true } })
 @plugin(mongoPaginate)
 export class Post extends Base {
   @Field(() => ID)

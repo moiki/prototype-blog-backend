@@ -11,6 +11,7 @@ import authChecker from "./middlewares/authChecker";
 import * as dotenv from "dotenv";
 import ErrorHandler from "./middlewares/errorHandler";
 import { PingResolver } from "./resolvers/ping";
+import AuthResolver from "./resolvers/authResolver";
 dotenv.config();
 const contextService = require("request-context");
 const { NODE_ENV, ALLOWED_ORIGINS } = process.env;
@@ -43,11 +44,7 @@ export async function startServer() {
     schema: await buildSchema({
       resolvers: [
         PingResolver,
-        // AuthResolver,
-        // ClinicResolver,
-        // EmployeeResolver,
-        // PatientResolver,
-        // WorRouteResolver,
+        AuthResolver,
       ],
       authChecker: authChecker,
     }),
