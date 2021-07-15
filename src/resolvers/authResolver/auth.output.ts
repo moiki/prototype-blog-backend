@@ -1,4 +1,4 @@
-import { Field, ObjectType } from "type-graphql";
+import { Field, ID, ObjectType } from "type-graphql";
 import { GeneralResponse } from "../../utils/globalTypes/globalTypes";
 
 @ObjectType()
@@ -27,32 +27,21 @@ export class RolesListResponse {
 
 @ObjectType()
 export class CurrentUser {
-  @Field({ nullable: true })
+  @Field(() => ID, { nullable: true })
   id: string;
   @Field({ nullable: true })
-  first_name: string;
+  firstName: string;
   @Field({ nullable: true })
-  last_name: string;
+  lastName: string;
   @Field()
-  full_name: string;
+  fullName: string;
   @Field()
   email: string;
   @Field({ nullable: true })
   phone: string;
-  @Field()
-  profession: string;
-  @Field({ nullable: true })
-  country: string;
-  @Field({ nullable: true })
-  state: string;
-  @Field({ nullable: true })
-  city: string;
-  @Field({ nullable: true })
-  address: string;
-  @Field()
   created_date: string;
-  @Field(() => [RolesListResponse], { nullable: true })
-  roles: RolesListResponse[];
+  @Field(() => ID, { nullable: true })
+  role: string;
 }
 
 @ObjectType({ description: "Response for CRUD action for Users" })

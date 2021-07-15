@@ -1,4 +1,10 @@
-import { ModelOptions, plugin, prop, Ref } from "@typegoose/typegoose";
+import {
+  getModelForClass,
+  modelOptions,
+  plugin,
+  prop,
+  Ref,
+} from "@typegoose/typegoose";
 import mongoPaginate from "../utils/mongoPaginate";
 import { Field, ID, ObjectType } from "type-graphql";
 import { Base } from "./abstract/base.mongo";
@@ -12,7 +18,7 @@ export enum POST_STATUS {
 }
 
 @ObjectType()
-@ModelOptions({ schemaOptions: { timestamps: true } })
+@modelOptions({ schemaOptions: { timestamps: true } })
 @plugin(mongoPaginate)
 export class Post extends Base {
   @Field(() => ID)
@@ -51,3 +57,5 @@ export class Post extends Base {
   @prop({ ref: "Tag", required: false })
   tags?: Ref<Tag>[];
 }
+
+export const postModel = getModelForClass(Post);

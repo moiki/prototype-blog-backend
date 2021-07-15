@@ -42,12 +42,12 @@ const authChecker: AuthChecker<any, AuthParams> = async (
 
       if (strict) {
         // Check if the required permission exits in the user permissions
-        if (!roles!.every((u: string) => u === u_roles.name)) {
+        if (!roles!.every((u: string) => u === String(u_roles).toString())) {
           throw new Error("Insufficient permissions for this request", 403);
         }
       } else {
         // Check if the required permission exits in the user permissions
-        if (!roles!.some((u: string) => u === u_roles.name)) {
+        if (!roles!.some((u: string) => u === u_roles?.toString())) {
           throw new Error("Insufficient permissions for this request", 403);
         }
       }

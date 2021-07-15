@@ -4,6 +4,8 @@ import { startServer } from "./app";
 import ErrorHandler from "./middlewares/errorHandler";
 import { MongooseConnection } from "./config/mongooseConfig";
 import { InitialSet } from "./utils/seed/seed";
+import * as dotenv from "dotenv";
+dotenv.config();
 
 async function main() {
   try {
@@ -15,8 +17,10 @@ async function main() {
       }
     });
     const server = await startServer();
-    server.listen(3200);
-    console.log(magenta(`🚀 Server ready at http://localhost:${3200}/graphql`));
+    server.listen(process.env.PORT || 5000);
+    console.log(
+      magenta(`🚀 Server ready at http://localhost:${process.env.PORT}/graphql`)
+    );
   } catch (error) {
     throw new ErrorHandler(error.message, error.code);
   }

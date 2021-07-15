@@ -1,5 +1,6 @@
 import { cyan } from "chalk";
 import * as dotenv from "dotenv";
+import { categoryModel } from "../../model/category.mongo";
 import { roleModel } from "../../model/role.mongo";
 import { userModel } from "../../model/user.mongo";
 dotenv.config();
@@ -30,7 +31,7 @@ export const seed_roles = [
   },
 ];
 
-export const seed_user = {
+const seed_user = {
   firstName: String(MASTER_ROOT_NAME).split(" ")[0] || "Manfred",
   lastName: String(MASTER_ROOT_NAME).split(" ")[1] || "Tijerino",
   email: MASTER_ROOT_EMAIL,
@@ -50,27 +51,32 @@ export const InitialSet = async () => {
       hashed_password: MASTER_ROOT_PASSWORD,
     };
     if ((await roleModel.estimatedDocumentCount()) > 0) {
-      console.log("Entrando Con Roles");
-
       await userModel.create(user);
     } else {
-      console.log("Entrando sin Roles");
       const new_roles = await Promise.all(
         seed_roles.map(async (role) => {
           return await roleModel.create(role);
         })
       );
-      console.log(new_roles);
       if (new_roles.length > 0) await userModel.create(user);
       console.log(
         cyan(
-          "***********************DEFAULT USER HAVE BEEN INSERTED*******************************"
+          "***************|| DEFAULT MASTER USER HAVE BEEN CREATED ||*********************"
         )
       );
     }
+    if ((await categoryModel.estimatedDocumentCount()) === 0) {
+      const firstCategory = await categoryModel.create({
+        name: "General",
+        description: "General Category for blog posts",
+      });
+      if (firstCategory) {
+        console.log(cyan("First category created"));
+      }
+    }
     return true;
   } catch (error) {
-    console.log("mi error", error.message);
+    console.log("Error details: ", error.message);
     return false;
   }
 };

@@ -26,12 +26,8 @@ import crypto from "../utils/crypto";
 
     // Hash the password before saving
     this.hashed_password = await crypto.hashPassword(this.hashed_password);
-
     // Get the admin and base role
-    const adminRole = await roleModel.findOne(
-      { usedFor: "master" },
-      { id: 1 }
-    );
+    const adminRole = await roleModel.findOne({ usedFor: "master" }, { id: 1 });
     const baseRole = await roleModel.findOne(
       { usedFor: "administrator" },
       { id: 1 }
@@ -72,8 +68,8 @@ export class User extends Base {
   @prop({ required: true })
   hashed_password: string;
 
-  @prop({ ref: 'Role', text: true })
-  @Field(() => Role, { nullable: false, })
+  @prop({ ref: "Role", text: true })
+  @Field(() => Role, { nullable: false })
   role: Ref<Role>;
 
   @prop({ default: 1 })
