@@ -1,10 +1,10 @@
 import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import * as dotenv from "dotenv";
-import { CurrentUser, LoginResponse } from "./auth.output";
+import { LoginResponse } from "./auth.output";
 import crypto from "../../utils/crypto";
 import ErrorHandler from "../../middlewares/errorHandler";
 import { CreateToken } from "../../utils/tokenBuilder";
-import { userModel } from "../../model/user.mongo";
+import { User, userModel } from "../../model/user.mongo";
 import { verify } from "jsonwebtoken";
 import { IMyContext } from "src/MyGraphContext";
 dotenv.config();
@@ -49,26 +49,21 @@ export default class AuthResolver {
     }
   }
 
-  @Query(() => CurrentUser)
+  @Query(() => User)
   @Authorized()
   async sessionUserInfo(
     @Ctx() { payload }: IMyContext
-  ): Promise<CurrentUser | any> {
+  ): Promise<User | any> {
     try {
       const cu = await userModel.findOne({ _id: payload?.id });
       if (!cu) {
         throw new ErrorHandler("There's a Problem with this user", 403);
       }
-
-      const sessionUser = {
-        ...cu,
-      };
-      return sessionUser;
+      return cu;
     } catch (error) {
       throw new ErrorHandler(error.message, error.code);
     }
   }
-
   /** Mutation Section */
   @Mutation(() => LoginResponse, { nullable: true })
   async login(@Arg("email") email: string, @Arg("password") password: string) {

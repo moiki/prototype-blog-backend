@@ -4,14 +4,13 @@ import enforce from "express-sslify";
 import cors from "cors";
 import helmet from "helmet";
 import { buildSchema } from "type-graphql";
-// import { AuthResolver } from "./resolvers/authResolver/auth.resolver";
-// import { PingResolver } from "./resolvers/ping";
 import { red, gray } from "chalk";
 import authChecker from "./middlewares/authChecker";
 import * as dotenv from "dotenv";
 import ErrorHandler from "./middlewares/errorHandler";
 import { PingResolver } from "./resolvers/ping";
 import AuthResolver from "./resolvers/authResolver";
+import CategoryResolver from "./resolvers/categoryResolver";
 dotenv.config();
 const contextService = require("request-context");
 const { NODE_ENV, ALLOWED_ORIGINS } = process.env;
@@ -45,6 +44,7 @@ export async function startServer() {
       resolvers: [
         PingResolver,
         AuthResolver,
+        CategoryResolver
       ],
       authChecker: authChecker,
     }),

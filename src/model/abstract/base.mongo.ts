@@ -46,6 +46,7 @@ export class Base {
   createdBy: string;
 
   @prop({ type: String, required: false, text: true, index: true })
+  @Field(() => String, { nullable: true, })
   createdByName: string;
 
   @prop({ required: false, text: true })
