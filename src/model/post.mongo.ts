@@ -10,6 +10,7 @@ import { Field, ID, ObjectType } from "type-graphql";
 import { Base } from "./abstract/base.mongo";
 import { Category } from "./category.mongo";
 import { Tag } from "./tags.mongo";
+import { User } from "./user.mongo";
 
 export enum POST_STATUS {
   ARCHIVED = "archived",
@@ -28,7 +29,7 @@ export class Post extends Base {
   @Field({ nullable: false })
   title: string;
 
-  @prop({ required: true, text: true, index: true })
+  @prop({ required: true, text: true, index: true, unique: true })
   @Field({ nullable: false })
   slug: string;
 
@@ -51,6 +52,14 @@ export class Post extends Base {
   @Field({ nullable: false })
   status: POST_STATUS;
 
+  @prop({ ref: 'User', required: true })
+  @Field(() => ID)
+  author: Ref<User>;
+
+  @prop({ required: true })
+  @Field(() => Date, { nullable: false })
+  publicationDate: Date;
+    
   @prop({ ref: "Category", required: false })
   categories?: Ref<Category>[];
 

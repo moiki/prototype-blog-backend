@@ -1,7 +1,7 @@
 import { ArgsType, Field } from "type-graphql";
 
 @ArgsType()
-export class CategoryInput {
+export class TagInput {
   @Field({nullable: true})
   id: string;
   @Field()
