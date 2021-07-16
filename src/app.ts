@@ -12,6 +12,7 @@ import { PingResolver } from "./resolvers/ping";
 import AuthResolver from "./resolvers/authResolver";
 import CategoryResolver from "./resolvers/categoryResolver";
 import TagsResolver from "./resolvers/tagsResolver";
+import PostResolver from "./resolvers/postResolver";
 dotenv.config();
 const contextService = require("request-context");
 const { NODE_ENV, ALLOWED_ORIGINS } = process.env;
@@ -47,6 +48,7 @@ export async function startServer() {
         AuthResolver,
         CategoryResolver,
         TagsResolver,
+        PostResolver,
       ],
       authChecker: authChecker,
     }),

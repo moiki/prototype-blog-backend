@@ -19,7 +19,9 @@ async function main() {
     const server = await startServer();
     server.listen(process.env.PORT || 5000);
     console.log(
-      magenta(`🚀 Server ready at http://localhost:${process.env.PORT}/graphql`)
+      magenta(
+        `🚀 API is running at http://localhost:${process.env.PORT}/graphql`
+      )
     );
   } catch (error) {
     throw new ErrorHandler(error.message, error.code);

@@ -1,3 +1,5 @@
+import { Category } from "../../model/category.mongo";
+import { Tag } from "../../model/tags.mongo";
 import { Field, ObjectType } from "type-graphql";
 
 @ObjectType()
@@ -12,10 +14,10 @@ export class PostList {
   author: string;
   @Field()
   thumbnail: string;
-  @Field()
-  categories: string[];
-  @Field()
-  tags: string[];
+  @Field(() => [Category])
+  categories: Category[];
+  @Field(() => [Tag])
+  tags: Tag[];
 }
 
 @ObjectType()
@@ -30,14 +32,14 @@ export class SinglePost {
   author: string;
   @Field()
   thumbnail: string;
-   @Field()
+  @Field()
   featured_picture: string;
-   @Field()
+  @Field()
   publicationDate: string;
-  @Field()
-  categories: string[];
-  @Field()
-  tags: string[];
+  @Field(() => [Category])
+  categories: Category[];
+  @Field(() => [Tag])
+  tags: Tag[];
   @Field()
   content: string;
 }

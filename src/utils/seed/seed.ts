@@ -41,6 +41,15 @@ const seed_user = {
 
 export const InitialSet = async () => {
   try {
+    if ((await categoryModel.estimatedDocumentCount()) === 0) {
+      const firstCategory = await categoryModel.create({
+        name: "General",
+        description: "General Category for blog posts",
+      });
+      if (firstCategory) {
+        console.log(cyan("First category created"));
+      }
+    }
     if ((await userModel.estimatedDocumentCount()) > 0) {
       return false;
     }
@@ -65,15 +74,7 @@ export const InitialSet = async () => {
         )
       );
     }
-    if ((await categoryModel.estimatedDocumentCount()) === 0) {
-      const firstCategory = await categoryModel.create({
-        name: "General",
-        description: "General Category for blog posts",
-      });
-      if (firstCategory) {
-        console.log(cyan("First category created"));
-      }
-    }
+
     return true;
   } catch (error) {
     console.log("Error details: ", error.message);

@@ -2,6 +2,7 @@ import {
   getModelForClass,
   modelOptions,
   plugin,
+  pre,
   prop,
   Ref,
 } from "@typegoose/typegoose";
@@ -11,6 +12,7 @@ import { Base } from "./abstract/base.mongo";
 import { Category } from "./category.mongo";
 import { Tag } from "./tags.mongo";
 import { User } from "./user.mongo";
+const contextService = require("request-context");
 
 export enum POST_STATUS {
   ARCHIVED = "archived",
@@ -18,6 +20,14 @@ export enum POST_STATUS {
   PUBLISHED = "published",
 }
 
+@pre<Post>("save", async function (next): Promise<void> {
+  const user = contextService.get("req:user");
+  this.author = user.user;
+  if (this.status === POST_STATUS.PUBLISHED) {
+    this.publicationDate = new Date();
+  }
+  next();
+})
 @ObjectType()
 @modelOptions({ schemaOptions: { timestamps: true } })
 @plugin(mongoPaginate)
@@ -52,14 +62,14 @@ export class Post extends Base {
   @Field({ nullable: false })
   status: POST_STATUS;
 
-  @prop({ ref: 'User', required: true })
+  @prop({ ref: "User", required: true })
   @Field(() => ID)
   author: Ref<User>;
 
   @prop({ required: true })
   @Field(() => Date, { nullable: false })
   publicationDate: Date;
-    
+
   @prop({ ref: "Category", required: false })
   categories?: Ref<Category>[];
 

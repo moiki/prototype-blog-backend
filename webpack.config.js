@@ -6,7 +6,7 @@ const { NODE_ENV } = process.env;
 
 module.exports = {
   entry: {
-    server: "./src/server.ts",
+    server: "./src/index.ts",
   },
   output: {
     filename: "server.bundle.js",

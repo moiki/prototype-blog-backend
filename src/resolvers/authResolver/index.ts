@@ -51,11 +51,9 @@ export default class AuthResolver {
 
   @Query(() => User)
   @Authorized()
-  async sessionUserInfo(
-    @Ctx() { payload }: IMyContext
-  ): Promise<User | any> {
+  async sessionUserInfo(@Ctx() { payload }: IMyContext): Promise<User | any> {
     try {
-      const cu = await userModel.findOne({ _id: payload?.id });
+      const cu = await userModel.findOne({ _id: payload?.id }).populate("role");
       if (!cu) {
         throw new ErrorHandler("There's a Problem with this user", 403);
       }
@@ -92,6 +90,7 @@ export default class AuthResolver {
       const accessToken = CreateToken(
         {
           user: user_exist._id,
+          fullName: `${user_exist.firstName} ${user_exist.lastName}`,
         },
         JWT_API_SECRET,
         EXPIRATION_TIME
