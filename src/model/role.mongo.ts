@@ -26,7 +26,7 @@ import mongoPaginate from '../utils/mongoPaginate';
 
 	next();
 })
-@ObjectType()
+@ObjectType('RoleModel')
 @modelOptions({ schemaOptions: { timestamps: true, collection: 'Role' } })
 @plugin(mongoPaginate)
 export class Role extends Base {

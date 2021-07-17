@@ -21,7 +21,7 @@ export enum POST_STATUS {
 	}
 	next();
 })
-@ObjectType()
+@ObjectType('PostModel')
 @modelOptions({ schemaOptions: { timestamps: true, collection: 'Post' } })
 @plugin(mongoPaginate)
 export class Post extends Base {

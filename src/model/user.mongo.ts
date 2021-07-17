@@ -40,7 +40,7 @@ import crypto from '../utils/crypto';
 
 	next();
 })
-@ObjectType()
+@ObjectType('UserModel')
 @modelOptions({ schemaOptions: { timestamps: true, collection: 'User' } })
 @plugin(mongoPaginate)
 export class User extends Base {

@@ -3,7 +3,7 @@ import mongoPaginate from '../utils/mongoPaginate';
 import { Field, ID, ObjectType } from 'type-graphql';
 import { Base } from './abstract/base.mongo';
 
-@ObjectType()
+@ObjectType('TagModel')
 @modelOptions({ schemaOptions: { timestamps: true, collection: 'Tag' } })
 @plugin(mongoPaginate)
 export class Tag extends Base {
