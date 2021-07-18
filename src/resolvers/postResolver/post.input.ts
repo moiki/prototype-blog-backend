@@ -1,7 +1,7 @@
 import { POST_STATUS } from '../../model/post.mongo';
 import { ArgsType, Field, ID, registerEnumType } from 'type-graphql';
 
-registerEnumType(POST_STATUS, { name: 'dateGroup' });
+registerEnumType(POST_STATUS, { name: 'postStatus' });
 @ArgsType()
 export class PostInput {
 	@Field()
