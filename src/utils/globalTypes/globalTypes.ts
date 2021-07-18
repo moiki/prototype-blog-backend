@@ -1,9 +1,13 @@
-import { Field, ObjectType } from "type-graphql";
+import { Field, ObjectType } from 'type-graphql';
 
-@ObjectType({ isAbstract: true })
+export enum ROLE_TYPE {
+	MASTER = 'master',
+	ADMIN = 'administrator',
+}
+@ObjectType('GeneralResponse', { isAbstract: true })
 export abstract class GeneralResponse {
-  @Field()
-  status: boolean;
-  @Field()
-  message: string;
+	@Field()
+	status: boolean;
+	@Field()
+	message: string;
 }

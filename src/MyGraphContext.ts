@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
+import { Request, Response } from 'express';
 
 export interface IMyContext {
-  req: Request;
-  res: Response;
-  payload?: { id: string };
+	req: Request;
+	res: Response;
+	payload?: { id: string; role: string };
 }

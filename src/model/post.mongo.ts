@@ -5,6 +5,7 @@ import { Base } from './abstract/base.mongo';
 import { Category } from './category.mongo';
 import { Tag } from './tags.mongo';
 import { User } from './user.mongo';
+import { ROLE_TYPE } from '../utils/globalTypes/globalTypes';
 const contextService = require('request-context');
 
 export enum POST_STATUS {
@@ -16,7 +17,9 @@ export enum POST_STATUS {
 @pre<Post>('save', async function (next): Promise<void> {
 	const user = contextService.get('req:user');
 	this.author = user.user;
-	if (this.status === POST_STATUS.PUBLISHED) {
+	if (user.role === ROLE_TYPE.ADMIN) {
+		this.status = POST_STATUS.DRAFTED;
+	} else if (this.status === POST_STATUS.PUBLISHED) {
 		this.publicationDate = new Date();
 	}
 	next();
@@ -56,17 +59,18 @@ export class Post extends Base {
 	status: POST_STATUS;
 
 	@prop({ ref: 'User', required: true })
-	@Field(() => ID)
+	@Field(() => User, { nullable: false })
 	author: Ref<User>;
 
 	@prop({ required: true })
 	@Field(() => Date, { nullable: false })
 	publicationDate: Date;
-
-	@prop({ ref: 'Category', required: false })
+	@Field(() => [Category!], { nullable: false })
+	@prop({ ref: 'Category', required: false, justOne: false })
 	categories?: Ref<Category>[];
 
-	@prop({ ref: 'Tag', required: false })
+	@Field(() => [Tag!], { nullable: false })
+	@prop({ ref: 'Tag', required: false, justOne: false })
 	tags?: Ref<Tag>[];
 }
 

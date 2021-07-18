@@ -6,7 +6,8 @@ import ErrorHandler from '../../middlewares/errorHandler';
 import { CreateToken } from '../../utils/tokenBuilder';
 import { User, userModel } from '../../model/user.mongo';
 import { verify } from 'jsonwebtoken';
-import { IMyContext } from 'src/MyGraphContext';
+import { IMyContext } from '../../MyGraphContext';
+import { roleModel } from '../../model/role.mongo';
 dotenv.config();
 
 const {
@@ -66,11 +67,13 @@ export default class AuthResolver {
 	@Mutation(() => LoginResponse, { nullable: true })
 	async login(@Arg('email') email: string, @Arg('password') password: string) {
 		try {
-			const user_exist = await userModel.findOne({ email: email });
+			const user_exist = await userModel.findOne({ email: email }).populate('role');
+
 			if (!user_exist) {
 				throw new ErrorHandler('User does not exist!', 401);
 			}
 
+			const userRole = await roleModel.findById(user_exist.role);
 			const isPass = await crypto.testPassword(password, user_exist.hashed_password);
 			if (!isPass) {
 				throw new ErrorHandler('Invalid Credentials!', 401);
@@ -79,6 +82,7 @@ export default class AuthResolver {
 			const refreshToken = CreateToken(
 				{
 					user: user_exist.id,
+					role: userRole?.usedFor,
 					name: `${user_exist.firstName} ${user_exist.lastName}`,
 				},
 				CRYPTO_SECRET_KEY,
