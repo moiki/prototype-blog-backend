@@ -1,4 +1,4 @@
-import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from 'type-graphql';
+import { Arg, Args, Authorized, Ctx, Mutation, Query, Resolver } from 'type-graphql';
 import * as dotenv from 'dotenv';
 import { LoginResponse } from './auth.output';
 import crypto from '../../utils/crypto';
@@ -8,13 +8,18 @@ import { User, userModel } from '../../model/user.mongo';
 import { verify } from 'jsonwebtoken';
 import { IMyContext } from '../../MyGraphContext';
 import { roleModel } from '../../model/role.mongo';
+import PasswordResetArg from './auth.input';
+import jwt from 'jsonwebtoken';
+import EmailProvider from '../../utils/email/index';
+import resetPasswordTemplate from '../../utils/email/resetPassword.template';
 dotenv.config();
 
 const {
 	JWT_API_SECRET = 'Tempo003',
 	CRYPTO_SECRET_KEY = 'Tempo001',
 	EXPIRATION_TIME = '1d',
-	// ROLE_KEY = "Tempo0002",
+	PASSWORD_RESET_REQUEST_EXPIRY,
+	GLOBAL_SECRET,
 } = process.env;
 @Resolver()
 export default class AuthResolver {
@@ -103,6 +108,47 @@ export default class AuthResolver {
 			};
 		} catch (error) {
 			throw new ErrorHandler(error.message, error.code);
+		}
+	}
+
+	@Query(() => Boolean)
+	async PasswordReset(@Args() { email }: PasswordResetArg): Promise<Boolean> {
+		try {
+			// locate the user within the database
+			const user = await userModel.findOne({ email: email });
+
+			// If no user end operations and return true
+			if (!user) {
+				throw new ErrorHandler('This email is not registered.', 401);
+			}
+
+			// Create a hash that will ensure the user is requesting a pw reset
+			const hash = jwt.sign(
+				{
+					id: user._id,
+					version: user.passwordRecoveryVersion,
+				},
+				GLOBAL_SECRET!,
+				{ expiresIn: PASSWORD_RESET_REQUEST_EXPIRY },
+			);
+
+			// Setup email constructor
+			const emailProvider = new EmailProvider({
+				template: resetPasswordTemplate(
+					`${user.firstName}`,
+					`http://localhost:5000/recovery/${hash}`,
+				),
+				subject: 'Password Recovery',
+				to: email,
+			});
+
+			// Send Email to validate account
+			await emailProvider.sendEmail();
+
+			// Return true no matter the outcome
+			return true;
+		} catch ({ message, error }) {
+			throw new ErrorHandler(message, error);
 		}
 	}
 }
