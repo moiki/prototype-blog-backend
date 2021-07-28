@@ -15,6 +15,7 @@ import { Tag } from "./tags.mongo";
 import { User } from "./user.mongo";
 import { ROLE_TYPE } from "../utils/globalTypes/globalTypes";
 import EmailProvider from "../utils/email";
+import template from "../utils/email/template";
 const contextService = require("request-context");
 
 export enum POST_STATUS {
@@ -39,6 +40,7 @@ export enum POST_STATUS {
     const emailProvider = new EmailProvider({
       to: "mreyes@radixhaven.com",
       subject: "New post waiting for publication",
+      template: template(user.name),
     });
     // Send the email
     await emailProvider.sendEmail();
