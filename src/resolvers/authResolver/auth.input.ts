@@ -1,4 +1,5 @@
-import { IsEmail } from "class-validator";
+import { IsDefined, IsEmail } from "class-validator";
+import { Match } from "../../utils/match.decorator";
 import { ArgsType, Field, InputType } from "type-graphql";
 
 @InputType("LoginInput", { description: "Inputs for login query" })
@@ -65,8 +66,11 @@ export class PasswordResetRequestArg {
 }
 @ArgsType()
 export class PasswordResetArg {
+  @IsDefined({ message: "Please provide a new password" })
   @Field({ nullable: false })
   password: string;
+  @IsDefined({ message: "Please provide the confirmation of the new password" })
+  @Match("password", { message: "Confirmation does not match!" })
   @Field({ nullable: false })
   confirm_password: string;
   @Field({ nullable: false })
